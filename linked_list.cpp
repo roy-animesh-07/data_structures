@@ -1,6 +1,4 @@
-#include<bits/stdc++.h>
-using namespace std;
-
+#include<iostream>
 class node {
 	public:
 		int data;
@@ -28,6 +26,14 @@ class llist {
 		llist(int data) {
 			head = new node(data);
 		}
+		~llist() {
+			node* temp;
+			while (head) {
+				temp = head;
+				head = head->next;
+				delete temp;
+			}
+		}
 		void insertAtEnd(int data);
 		void deleteFromEnd();
 		void insertAtHead(int data);
@@ -36,6 +42,10 @@ class llist {
 		int nodesCount();
 		bool isListSorted();
 		void sortList();
+		bool isNodePresent(int data);
+		void insertAfterInodes(int data,int i);
+		void deleteAfterInodes(int i);
+		void reverseList();
 		void printList();
 };
 node* llist::merge(node* left, node* right){
@@ -88,6 +98,12 @@ void llist::insertAtEnd(int data) {
 	temp->next = newnode;
 }
 void llist::deleteFromEnd() {
+	if (!head) return; 
+    if (!head->next) { 
+        delete head;
+        head = nullptr;
+        return;
+    }
 	node *temp = this->head;
 	node *prev = nullptr;
 	while(temp->next!=nullptr) {
@@ -106,6 +122,12 @@ void llist::insertAtHead(int data) {
 	this->head = newnode;
 }
 void llist::deleteFromHead() {
+	if (!head) return; 
+    if (!head->next) { 
+        delete head;
+        head = nullptr;
+        return;
+    }
 	node *temp = this->head;
 	head = head->next;
 	if(temp) delete(temp);
@@ -113,13 +135,13 @@ void llist::deleteFromHead() {
 void llist::printList() {
 	node *temp = head;
 	if(temp==nullptr) {
-		cout<<"List is empty\n";
+		std::cout<<"List is empty\n";
 	}
 	while(temp!=nullptr) {
-		cout<<temp->data<<" ";
+		std::cout<<temp->data<<" ";
 		temp = temp->next;
 	}
-	cout<<"\n";
+	std::cout<<"\n";
 }
 bool llist::isListEmpty() {
 	if(head==nullptr) return 1;
@@ -157,24 +179,85 @@ bool llist::isListSorted() {
 void llist::sortList() {
 	head = mergeSort(this->head);
 }
-
-
+bool llist::isNodePresent(int data) {
+	node *temp = head;
+	bool ch = false;
+	while(temp!=nullptr) {
+		if(temp->data==data) {
+			ch=true;
+			break;
+		}
+		temp = temp->next;
+	}
+	return ch;
+}
+void llist::insertAfterInodes(int data,int i) {
+	node *temp = head;
+	if(nodesCount()<i ) {
+		std::cout<<"Insertion Failed list has less than i nodes\n";
+	}
+	else{
+		node *prev = head;
+		while(i--) {
+			prev = temp;
+			temp = temp->next;
+		}
+		node *newnode = new node(data);
+		prev->next = newnode;
+		newnode->next = temp;
+	}
+}
+void llist::deleteAfterInodes(int i) {
+	node *temp = head;
+	if(nodesCount()<i ) {
+		std::cout<<"Deletion Failed list has less than i nodes\n";
+	}
+	else{
+		node *prev = head;
+		while(i--) {
+			prev = temp;
+			temp = temp->next;
+		}
+		prev->next = temp->next;
+		delete(temp);
+	}
+}
+void llist::reverseList() {
+	if(head==nullptr || head->next==nullptr) return;
+	node *prev = nullptr;
+	node *curr = head;
+	node *nex = head->next;
+	while(curr!=nullptr) {
+		curr->next = prev;
+		prev = curr;
+		curr = nex;
+		if(nex)
+			nex = nex->next;
+	}
+	head = prev;
+}
 int main()  {
+
 	llist l1;
-	for(int i = 0;i<20;i++) {
+	for(int i = 0;i<5;i++) {
 		int val = rand() %1000;
 		l1.insertAtEnd(val);
 	}
 
 	l1.printList();
 
-	cout<<l1.isListEmpty()<<"\n";
-	cout<<l1.nodesCount()<<"\n";
-	cout<<l1.isListSorted()<<"\n";
+	std::cout<<l1.isListEmpty()<<"\n";
+	std::cout<<l1.nodesCount()<<"\n";
+	std::cout<<l1.isListSorted()<<"\n";
 
 
 	l1.sortList();
-	cout<<l1.isListSorted()<<"\n";
+	std::cout<<l1.isListSorted()<<"\n";
+	l1.printList();
+	l1.reverseList();
+	l1.deleteAfterInodes(2);
+	l1.insertAfterInodes(5,2);
+	std::cout<<l1.isNodePresent(776)<<"\n";
 	l1.printList();
 	return 0;
 }
